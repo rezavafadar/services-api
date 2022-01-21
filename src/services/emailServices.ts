@@ -53,14 +53,6 @@ const sendEmailVerify = (userEmail: string, url: string) => {
 	});
 };
 
-const sendEmailWarning = (userEmail: string, url: string) => {
-	return transporter.sendMail({
-		from: process.env.EMAIL_USER,
-		to: userEmail,
-		subject: 'Verify Your Email',
-		text: `Your email has been used to register on the site, if you have not done so, click on the link below.`,
-	});
-};
 export default {
 	sendWlcEmail,
 	sendEmailVerify,

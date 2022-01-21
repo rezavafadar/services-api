@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import userService from '../services/userServices';
 import AppError from '../utils/appError';
 import filteredObj from '../utils/filteredObj';
-import { UserInRequest } from '../middlewares/protect';
+import { UserInRequest } from '../types/user';
 import { isValidObjectId } from 'mongoose';
 import hashServices from '../services/hashServices';
 import { uploadImg } from '../services/uploaderServices';

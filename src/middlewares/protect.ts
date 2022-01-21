@@ -1,13 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 
-import { UserDocument } from '../models/userModel';
 import { verifyToken } from '../services/jwtServices';
 import userService from '../services/userServices';
 import AppError from '../utils/appError';
-
-export interface UserInRequest extends Request {
-	user: UserDocument;
-}
+import { UserDocument, UserInRequest } from '../types/user';
 
 export const protect =
 	(...access: string[]) =>

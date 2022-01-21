@@ -1,15 +1,13 @@
-import mongoose from 'mongoose';
 import userSchema from '../models/userModel';
 
-export interface CreateUserData {
-	username: string;
-	email: string;
-	password: string;
-	illegalEmail: string;
-}
+import { CreateUser } from '../types/user';
 
-const createUser = (user: CreateUserData) => {
+const createUser = (user: CreateUser) => {
 	return userSchema.create(user);
+};
+
+const findUsers = () => {
+	return userSchema.find({});
 };
 
 const findUserByUsernameOrEmail = (username: string) => {
@@ -17,6 +15,10 @@ const findUserByUsernameOrEmail = (username: string) => {
 		$or: [{ email: username }, { username }],
 		$and: [{ active: true }],
 	});
+};
+
+const findIllegalEmail = (token: string) => {
+	return userSchema.findOne({ illegalEmail: token, active: true });
 };
 
 const findUserById = (id: string) => {
@@ -31,16 +33,8 @@ const deactivateUser = (id: string) => {
 	return userSchema.findByIdAndUpdate(id, { active: false });
 };
 
-const findIllegalEmail = (token: string) => {
-	return userSchema.findOne({ illegalEmail: token, active: true });
-};
-
 const deleteUser = (id: string) => {
 	return userSchema.deleteOne({ id });
-};
-
-const findUsers = () => {
-	return userSchema.find({});
 };
 
 export default {

@@ -1,9 +1,9 @@
 import express from 'express';
 
-import apiRoutes from './routes/api';
-import globalErrorHandler from './controllers/errorController';
-import { forrbidenController } from './controllers/forbiddenController';
-import { logger } from './services/loggerServices';
+import apiRoutes from './src/routes/api';
+import globalErrorHandler from './src/controllers/errorController';
+import { forrbidenController } from './src/controllers/forbiddenController';
+import { logger } from './src/services/loggerServices';
 import winston from 'winston';
 
 function createApp(config?: any) {
@@ -25,7 +25,7 @@ function createApp(config?: any) {
 	app.all('*', forrbidenController);
 	app.use(globalErrorHandler);
 
-	const PORT: string | number = config?.PORT || process.env.PORT || 3000;
+	const PORT: string | number = config?.PORT || process.env.PORT || 5000;
 
 	return {
 		listen: () =>

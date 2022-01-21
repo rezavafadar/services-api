@@ -1,6 +1,7 @@
-import multer, { FileFilterCallback, DiskStorageOptions, Multer } from 'multer';
-import { UserInRequest } from '../middlewares/protect';
+import multer from 'multer';
 import AppError from '../utils/appError';
+
+import { UserInRequest } from '../types/user';
 
 // Multer
 

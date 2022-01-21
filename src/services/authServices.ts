@@ -1,23 +1,27 @@
-import { linkDoc, LinkFindDocument } from '../models/linkModel';
-import { UserDocument } from '../models/userModel';
 import hashServices from './hashServices';
-import linkServices from './linkServices';
+import linkServices from './userLinkServices';
+import userService from './userServices';
 
-import userService, { CreateUserData } from './userServices';
+import { UserDocument } from '../types/user';
+import { CreateUser } from '../types/user';
+import { CreateUserLink, GetUserLink } from '../types/userLink';
 
-const register = async (userData: any, illegalToken: string): Promise<any> => {
+const register = async (userData: any): Promise<any> => {
 	const currentUser: UserDocument = await userService.findUserByUsernameOrEmail(
 		userData.username
 	);
 
 	if (currentUser)
-		return { code: 401, message: 'There is a user with this profile' };
+		return {
+			code: 401,
+			message: 'There is a user with this profile',
+		};
 
 	const hashPassword: string = await hashServices.hash(userData.password);
 
-	const user: CreateUserData = {
+	const user: CreateUser = {
 		...userData,
-		...{ password: hashPassword, illegalEmail: illegalToken },
+		...{ password: hashPassword },
 	};
 
 	return userService.createUser(user);
@@ -59,10 +63,8 @@ const getVerifyEmail = async (email: string, link: string): Promise<any> => {
 	if (user.isEmailVerify)
 		return { code: 401, message: 'Your Email is active !' };
 
-	const currentLink: LinkFindDocument = await linkServices.findUserLink(
-		user.id,
-		'verifyEmail'
-	);
+	const currentLink: GetUserLink =
+		await linkServices.findUserLinkByUserIdAndType(user.id, 'verifyEmail');
 
 	if (currentLink) {
 		if (currentLink.expired < new Date(Date.now())) {
@@ -75,7 +77,7 @@ const getVerifyEmail = async (email: string, link: string): Promise<any> => {
 		}
 	}
 
-	const linkData: linkDoc = {
+	const linkData: CreateUserLink = {
 		link,
 		type: 'verifyEmail',
 		userId: user.id,
@@ -85,7 +87,7 @@ const getVerifyEmail = async (email: string, link: string): Promise<any> => {
 };
 
 const confirmEmail = async (userLink: string): Promise<any> => {
-	const link: LinkFindDocument = await linkServices.findLink(
+	const link: GetUserLink = await linkServices.findUserLinkByLinkAndType(
 		userLink,
 		'verifyEmail'
 	);
@@ -111,10 +113,8 @@ const forgotPassword = async (username: string, link: string): Promise<any> => {
 
 	if (!user) return { code: 404, message: 'User is not defined !' };
 
-	const currentLink: LinkFindDocument = await linkServices.findUserLink(
-		user.id,
-		'forgotPassword'
-	);
+	const currentLink: GetUserLink =
+		await linkServices.findUserLinkByUserIdAndType(user.id, 'forgotPassword');
 
 	if (currentLink) {
 		if (currentLink.expired < new Date(Date.now())) {
@@ -127,7 +127,7 @@ const forgotPassword = async (username: string, link: string): Promise<any> => {
 		}
 	}
 
-	const linkData: linkDoc = {
+	const linkData: CreateUserLink = {
 		type: 'forgotPassword',
 		userId: user.id,
 		link,
@@ -140,7 +140,7 @@ const resetPassword = async (
 	userLink: string,
 	password: string
 ): Promise<any> => {
-	const link: LinkFindDocument = await linkServices.findLink(
+	const link: GetUserLink = await linkServices.findUserLinkByLinkAndType(
 		userLink,
 		'forgotPassword'
 	);

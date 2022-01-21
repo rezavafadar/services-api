@@ -1,9 +1,10 @@
+import { isValidObjectId } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 
 import creditServices from '../services/creditServices';
-import { UserInRequest } from '../middlewares/protect';
 import AppError from '../utils/appError';
-import { isValidObjectId } from 'mongoose';
+
+import { UserInRequest } from '../types/user';
 
 const createCode = async (req: Request, res: Response, next: NextFunction) => {
 	const body = req.body;
@@ -16,8 +17,6 @@ const createCode = async (req: Request, res: Response, next: NextFunction) => {
 		code: body.code,
 		amount: body.amount,
 	});
-
-	console.log(createCodeResult);
 
 	if (createCodeResult.errorCode)
 		return next(new AppError(createCodeResult.message, createCodeResult.code));

@@ -1,19 +1,5 @@
 import mongoose from 'mongoose';
 
-export interface UserDocument extends mongoose.Document {
-	username: string;
-	email: string;
-	photo: string;
-	credit: number;
-	password: string;
-	role: string;
-	active: string;
-	createAt: Date;
-	updateAt: Date;
-	isEmailVerify: boolean;
-	illegalEmail: string;
-}
-
 const userSchema = new mongoose.Schema({
 	username: { required: true, type: String },
 	email: { required: true, type: String },

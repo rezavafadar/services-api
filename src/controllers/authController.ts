@@ -16,20 +16,20 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
 	if (validateBody != null)
 		return next(new AppError('Bad Request!', 400, validateBody));
 
-	const bodyFiltered = filteredObj(body, 'username', 'email', 'password');
-	const illegalEmail: string = randomStringGenerator(5);
+	const user = filteredObj(body, 'username', 'email', 'password');
 
-	const registerResult = await authServices.register(
-		bodyFiltered,
-		illegalEmail
-	);
+	const illegalEmail: string = randomStringGenerator(5);
+	user.illegalEmail = illegalEmail;
+
+	const registerResult = await authServices.register(user);
+
 	if (registerResult.code)
 		return next(new AppError(registerResult.message, registerResult.code));
 
 	const url = `${req.protocol}://${req.get(
 		'host'
 	)}/api/v1/auth/illegal-email/${illegalEmail}`;
-	emailServices.sendWlcEmail(bodyFiltered.email, url);
+	emailServices.sendWlcEmail(user.email, url);
 
 	res.status(200).json({ message: 'successful!' });
 };

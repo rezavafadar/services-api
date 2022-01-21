@@ -1,11 +1,5 @@
 import mongoose from 'mongoose';
 
-export interface CreditDocument extends mongoose.Document {
-	code: string;
-	amount: number;
-	users: string[];
-}
-
 const creditCodeSchema = new mongoose.Schema({
 	code: { type: String, required: true },
 	amount: { type: Number, required: true },

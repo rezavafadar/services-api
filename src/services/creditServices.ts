@@ -1,17 +1,14 @@
-import creditCodeSchema, { CreditDocument } from '../models/creditCodeModel';
-import { UserDocument } from '../models/userModel';
+import creditCodeSchema from '../models/creditCodeModel';
 import userService from './userServices';
 
-interface CreateCode {
-	code: string;
-	amount: number;
-}
+import { UserDocument } from '../types/user';
+import { CreditCodeDocument, CreateCode } from '../types/creditCode';
 
 const createCreditCode = (code: string, amount: number) => {
 	return creditCodeSchema.create({ code, amount });
 };
 
-const findCreditCode = (code: string) => {
+const findCreditCodeByCode = (code: string) => {
 	return creditCodeSchema.findOne({ code, status: true });
 };
 
@@ -32,7 +29,9 @@ const deleteCreditCode = (id: string) => {
 };
 
 const createCode = async (data: CreateCode): Promise<any> => {
-	const currentCreditCode: CreditDocument = await findCreditCode(data.code);
+	const currentCreditCode: CreditCodeDocument = await findCreditCodeByCode(
+		data.code
+	);
 
 	if (currentCreditCode)
 		return { errorCode: 401, message: 'Credit code already exists' };
@@ -41,7 +40,7 @@ const createCode = async (data: CreateCode): Promise<any> => {
 };
 
 const applyCode = async (userId: string, code: string): Promise<any> => {
-	const creditCode: CreditDocument = await findCreditCode(code);
+	const creditCode: CreditCodeDocument = await findCreditCodeByCode(code);
 
 	if (!creditCode)
 		return { errorCode: 401, message: 'Credit code is not defined!' };
@@ -61,7 +60,7 @@ const applyCode = async (userId: string, code: string): Promise<any> => {
 
 export default {
 	createCreditCode,
-	findCreditCode,
+	findCreditCodeByCode,
 	createCode,
 	applyCode,
 	deleteCreditCode,
